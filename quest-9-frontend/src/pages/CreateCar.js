@@ -3,11 +3,28 @@ import CarCard from '../components/CarCard'
 import { AccountId } from '@hashgraph/sdk'
 
 const nftId = AccountId.fromSolidityAddress(process.env.REACT_APP_NFT_ADDRESS).toString()
-const isAvailable = (currentHolderId) => currentHolderId === process.env.REACT_APP_SC_ID
+const scId = process.env.REACT_APP_SC_ID
+const isAvailable = (currentHolderId) => currentHolderId === scId
+
+const accountIdFilterOptions = [
+  {
+    value: '',
+    label: 'All'
+  },
+  {
+    value: `account.id=eq%3A${scId}&`,
+    label: 'Available'
+  },
+  {
+    value: `account.id=ne%3A${scId}&`,
+    label: 'Borrowed'
+  }
+]
 
 function CreateCar ({ createCar }) {
   const [data, setData] = useState()
   const [flag, setFlag] = useState(false)
+  const [accountIdFilter, setAccountIdFilter] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -16,7 +33,7 @@ function CreateCar ({ createCar }) {
     const readData = async () => {
       try {
         await fetch(
-          `https://testnet.mirrornode.hedera.com/api/v1/tokens/${nftId}/nfts?order=asc`
+          `https://testnet.mirrornode.hedera.com/api/v1/tokens/${nftId}/nfts?${accountIdFilter}order=asc`
         )
           .then((response) => response.json())
           .then((data) => {
@@ -28,7 +45,7 @@ function CreateCar ({ createCar }) {
     }
 
     readData()
-  }, [nftId, flag])
+  }, [accountIdFilter, flag])
 
   return (
     <div className='App'>
@@ -53,6 +70,30 @@ function CreateCar ({ createCar }) {
           </button>
         </div>
       </form>
+
+      {/* Filters for list of cars to display */}
+      <div
+        className='flex-center radio-filter'
+      >
+        {
+          accountIdFilterOptions.map(({ value, label }) => (
+            <>
+              <input
+                type="radio"
+                className='invisible'
+                name="accountIdFilter"
+                onClick={() => setAccountIdFilter(value)}
+                id={label}
+                value={value}
+                checked={accountIdFilter === value}
+              />
+              <label for={label}>
+                {label}
+              </label>
+            </>
+          ))
+        }
+      </div>
 
       {/* List of car NFTs created */}
       {data?.nfts?.map((nft, index) => (

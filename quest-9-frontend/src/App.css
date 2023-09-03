@@ -149,3 +149,24 @@
   display: flex;
   padding: 0px 3rem;
 }
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
+
+.invisible {
+  display: none;
+}
+
+.radio-filter label {
+  padding: 6px 12px;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.radio-filter input[type="radio"]:checked+label {
+  background-color: #2196f3;
+  color: white;
+  border-radius: 5px;
+}
