@@ -1,37 +1,37 @@
-import { useEffect, useState } from "react";
-import { AccountId } from "@hashgraph/sdk";
+import { useEffect, useState } from 'react'
+import { AccountId } from '@hashgraph/sdk'
 
-function ScoreForm({ index, account, giveScore, flag, setFlag }) {
-  const [isLoading, setIsLoading] = useState(false);
+function ScoreForm ({ index, account, giveScore, flag, setFlag }) {
+  const [isLoading, setIsLoading] = useState(false)
   return (
     <form
       onSubmit={async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        await giveScore(account, document.getElementById(`score${index}`).value);
-        setIsLoading(false);
-        setFlag(!flag);
+        e.preventDefault()
+        setIsLoading(true)
+        await giveScore(account, document.getElementById(`score${index}`).value)
+        setIsLoading(false)
+        setFlag(!flag)
       }}
-      className="box"
+      className='box'
     >
-      <div className="score-container">
-        <input type="number" id={`score${index}`} placeholder="Score Amount" min={1} max={5} required />
-        <button key={index} className="primary-btn" type="submit" disabled={isLoading}>
-          {isLoading ? "Loading..." : "Give Reputation Tokens"}
+      <div className='score-container'>
+        <input type='number' id={`score${index}`} placeholder='Score Amount' min={1} max={5} required />
+        <button key={index} className='primary-btn' type='submit' disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Give Reputation Tokens'}
         </button>
       </div>
     </form>
-  );
+  )
 }
 
-function GiveScore({ giveScore }) {
-  const [data, setData] = useState();
-  const [flag, setFlag] = useState(false);
+function GiveScore ({ giveScore }) {
+  const [data, setData] = useState()
+  const [flag, setFlag] = useState(false)
 
   useEffect(() => {
     // Fetching data from Hedera Mirror Node for list of past borrower
-    const escrowAddress = process.env.REACT_APP_SC_ADDRESS;
-    const EvmAddress = escrowAddress.replace("0x", "");
+    const escrowAddress = process.env.REACT_APP_SC_ADDRESS
+    const EvmAddress = escrowAddress.replace('0x', '')
     const readData = async () => {
       try {
         await fetch(`https://testnet.mirrornode.hedera.com/api/v1/accounts/${EvmAddress}`)
@@ -44,54 +44,54 @@ function GiveScore({ giveScore }) {
             )
               .then((response) => response.json())
               .then((list) => {
-                setData(list?.balances?.filter((nft) => nft.account !== data.account));
-              });
-          });
+                setData(list?.balances?.filter((nft) => nft.account !== data.account))
+              })
+          })
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
-    };
+    }
 
-    readData();
-  }, [flag]);
+    readData()
+  }, [flag])
 
   return (
-    <div className="App">
+    <div className='App'>
       <h1>List of Borrowers</h1>
       {/* Card for giving reputation score to user account */}
 
       {data?.map((nft, index) => (
-        <div className="card" key={index}>
-          <div className="item" style={{ width: "100%" }}>
+        <div className='card' key={index}>
+          <div className='item' style={{ width: '100%' }}>
             <table>
               <tbody>
                 <tr>
-                  <td className="title" style={{ fontWeight: "bold" }}>
+                  <td className='title' style={{ fontWeight: 'bold' }}>
                     Customer
                   </td>
-                  <td className="desc" style={{ fontWeight: "bold" }}>
+                  <td className='desc' style={{ fontWeight: 'bold' }}>
                     #{index + 1}
                   </td>
                 </tr>
                 <tr>
-                  <td className="title">Account ID:</td>
-                  <td className="desc">{nft.account}</td>
+                  <td className='title'>Account ID:</td>
+                  <td className='desc'>{nft.account}</td>
                 </tr>
                 <tr>
-                  <td className="title">Car borrowed:</td>
-                  <td className="desc">{nft.balance}</td>
+                  <td className='title'>Car borrowed:</td>
+                  <td className='desc'>{nft.balance}</td>
                 </tr>
               </tbody>
             </table>
             {/* Button for borrowing the car */}
-            <div className="btn-container">
+            <div className='btn-container'>
               <ScoreForm index={index} account={nft.account} giveScore={giveScore} flag={flag} setFlag={setFlag} />
             </div>
           </div>
         </div>
       ))}
     </div>
-  );
+  )
 }
 
-export default GiveScore;
+export default GiveScore

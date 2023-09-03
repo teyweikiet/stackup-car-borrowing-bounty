@@ -1,27 +1,28 @@
-import { useEffect, useState } from "react";
-import moment from "moment";
+import { useEffect, useState } from 'react'
 
-function ReturnButton({ nft, returnCar, flag, setFlag }) {
-  const [isLoading, setIsLoading] = useState(false);
+import CarCard from '../components/CarCard'
+
+function ReturnButton ({ nft, returnCar, flag, setFlag }) {
+  const [isLoading, setIsLoading] = useState(false)
   return (
     <button
-      className="return-btn"
+      className='return-btn'
       onClick={async () => {
-        setIsLoading(true);
-        await returnCar(nft.token_id, nft.serial_number);
-        setIsLoading(false);
-        setFlag(!flag);
+        setIsLoading(true)
+        await returnCar(nft.token_id, nft.serial_number)
+        setIsLoading(false)
+        setFlag(!flag)
       }}
       disabled={isLoading}
     >
-      {isLoading ? "Returning..." : "Return"}
+      {isLoading ? 'Returning...' : 'Return'}
     </button>
-  );
+  )
 }
 
-function Return({ returnCar, address }) {
-  const [data, setData] = useState();
-  const [flag, setFlag] = useState(false);
+function Return ({ returnCar, address }) {
+  const [data, setData] = useState()
+  const [flag, setFlag] = useState(false)
 
   useEffect(() => {
     // Fetching data from Hedera Mirror Node for car that can be returned
@@ -32,76 +33,36 @@ function Return({ returnCar, address }) {
         )
           .then((response) => response.json())
           .then((data) => {
-            setData(data);
-          });
+            setData(data)
+          })
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
-    };
+    }
 
-    readData();
-  }, [address, flag]);
+    readData()
+  }, [address, flag])
 
   return (
-    <div className="App">
+    <div className='App'>
       <h1>Car Returning Page</h1>
 
       {data?.nfts?.map((nft, index) => (
-        <div className="card" key={index}>
-          <div className="box">
-            <div>
-              {/* Car Image */}
-              <img
-                src="https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=250&h=140&dpr=1"
-                alt="car"
-                style={{ borderRadius: "5px" }}
-              />
-            </div>
-
-            <div className="item">
-              <table>
-                <tbody>
-                  <tr>
-                    <td className="title" style={{ fontWeight: "bold" }}>
-                      Token ID:
-                    </td>
-                    <td className="desc" style={{ fontWeight: "bold" }}>
-                      {nft.token_id}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="title">Serial Number:</td>
-                    <td className="desc">{nft.serial_number}</td>
-                  </tr>
-                  <tr>
-                    <td className="title">Current Holder:</td>
-                    <td className="desc">{nft.account_id}</td>
-                  </tr>
-                  <tr>
-                    <td className="title">Updated at:</td>
-                    <td className="desc">
-                      {moment
-                        .unix(nft.modified_timestamp)
-                        .format(`DD MMMM YYYY, h:mm:ss A`)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              {/* Button for returning the car */}
-              <div className="btn-container">
-                <ReturnButton
-                  nft={nft}
-                  returnCar={returnCar}
-                  flag={flag}
-                  setFlag={setFlag}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <CarCard
+          key={index}
+          nft={nft}
+          actionButton={
+            <ReturnButton
+              nft={nft}
+              returnCar={returnCar}
+              flag={flag}
+              setFlag={setFlag}
+            />
+          }
+        />
       ))}
     </div>
-  );
+  )
 }
 
-export default Return;
+export default Return
