@@ -20,28 +20,28 @@ import { MirrorNodeClient } from '../src/mirrorNodeClient'
 // Part 1 - import ABI
 import MerchantBackend from './MerchantBackend.json'
 
+// Part 2 - define environment variables
+const scAddress = process.env.REACT_APP_SC_ADDRESS
+const nftAddress = process.env.REACT_APP_NFT_ADDRESS
+const nftId = AccountId.fromSolidityAddress(nftAddress).toString()
+const ftAddress = process.env.REACT_APP_FT_ADDRESS
+const ftId = AccountId.fromSolidityAddress(ftAddress).toString()
+const topicId = process.env.REACT_APP_TOPIC_ID
+
+const merchantKey = PrivateKey.fromString(process.env.REACT_APP_MERCHANT_PRIVATE_KEY)
+const merchantId = AccountId.fromString(process.env.REACT_APP_MERCHANT_ID)
+const merchantAddress = process.env.REACT_APP_MERCHANT_ADDRESS
+
+const customerKey = PrivateKey.fromString(process.env.REACT_APP_CUSTOMER_KEY)
+const customerAccount = AccountId.fromString(process.env.REACT_APP_CUSTOMER_ACCOUNT_ID)
+
+// Part 3 - create client instance
+const client = Client.forTestnet().setOperator(merchantId, merchantKey)
+
 function App () {
   const [defaultAccount, setDefaultAccount] = useState('')
   const [score, setScore] = useState(0)
   const [contract, setContract] = useState()
-
-  // Part 2 - define environment variables
-  const scAddress = process.env.REACT_APP_SC_ADDRESS
-  const nftAddress = process.env.REACT_APP_NFT_ADDRESS
-  const nftId = AccountId.fromSolidityAddress(nftAddress).toString()
-  const ftAddress = process.env.REACT_APP_FT_ADDRESS
-  const ftId = AccountId.fromSolidityAddress(ftAddress).toString()
-  const topicId = process.env.REACT_APP_TOPIC_ID
-
-  const merchantKey = PrivateKey.fromString(process.env.REACT_APP_MERCHANT_PRIVATE_KEY)
-  const merchantId = AccountId.fromString(process.env.REACT_APP_MERCHANT_ID)
-  const merchantAddress = process.env.REACT_APP_MERCHANT_ADDRESS
-
-  const customerKey = PrivateKey.fromString(process.env.REACT_APP_CUSTOMER_KEY)
-  const customerAccount = AccountId.fromString(process.env.REACT_APP_CUSTOMER_ACCOUNT_ID)
-
-  // Part 3 - create client instance
-  const client = Client.forTestnet().setOperator(merchantId, merchantKey)
 
   const connect = async () => {
     if (window.ethereum) {
@@ -75,37 +75,44 @@ function App () {
     setContract(contractInstance)
   }
 
-  const getScore = async () => {
-    try {
-      if (defaultAccount) {
-        // Part 17 - get reputation token score
-        await fetch(`https://testnet.mirrornode.hedera.com/api/v1/accounts/${defaultAccount}/tokens?token.id=${ftId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            if (!data.tokens[0]) {
-              setScore(0)
-              return
-            }
-            setScore(data.tokens[0].balance)
-          })
-      }
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
   useEffect(() => {
     connect()
+  })
+
+  useEffect(() => {
+    const getScore = async () => {
+      try {
+        if (defaultAccount) {
+          // Part 17 - get reputation token score
+          await fetch(`https://testnet.mirrornode.hedera.com/api/v1/accounts/${defaultAccount}/tokens?token.id=${ftId}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (!data.tokens[0]) {
+                setScore(0)
+                return
+              }
+              setScore(data.tokens[0].balance)
+            })
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
     getScore()
   }, [defaultAccount])
 
-  const createCar = async (cid) => {
+  const createCar = async (cid, dailyRate, lateRate) => {
     try {
       if (!contract) getContract()
       // Part 6 - add new car
-      const tx = await contract.mintNFT(nftAddress, [Buffer.from(cid)], {
-        gasLimit: 1_000_000
-      })
+      const tx = await contract.mintNFT(
+        nftAddress,
+        [Buffer.from(cid)],
+        ethers.utils.parseEther(String(dailyRate)),
+        ethers.utils.parseEther(String(lateRate)), {
+          gasLimit: 1_000_000
+        }
+      )
       await tx.wait()
       // Part 7 - submit add new car logs to topic
       new TopicMessageSubmitTransaction()
@@ -210,7 +217,7 @@ function App () {
 
       // Part 14 - give SC allowance
       client.setOperator(customerAccount, customerKey)
-      const smartContractAccountId = await getContractId()
+      const smartContractAccountId = process.env.REACT_APP_SC_ID // await getContractId()
       const allowanceApproveTxResponse = await new AccountAllowanceApproveTransaction()
         .approveTokenNftAllowanceAllSerials(id, customerAccount, smartContractAccountId)
         .freezeWith(client)

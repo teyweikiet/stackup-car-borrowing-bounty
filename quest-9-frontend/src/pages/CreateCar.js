@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import CarCard from '../components/CarCard'
 import { AccountId } from '@hashgraph/sdk'
+import MintCarNftForm from '../components/MintCarNftForm'
+import { Group } from '@mantine/core'
 
 const nftId = AccountId.fromSolidityAddress(process.env.REACT_APP_NFT_ADDRESS).toString()
 const scId = process.env.REACT_APP_SC_ID
@@ -26,8 +28,6 @@ function CreateCar ({ createCar }) {
   const [flag, setFlag] = useState(false)
   const [accountIdFilter, setAccountIdFilter] = useState('')
 
-  const [isLoading, setIsLoading] = useState(false)
-
   useEffect(() => {
     // Fetching data from Hedera Mirror Node for cars created
     const readData = async () => {
@@ -49,27 +49,21 @@ function CreateCar ({ createCar }) {
 
   return (
     <div className='App'>
-      <h1>Add New Car</h1>
-
-      {/* Form for creating a new car NFT */}
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault()
-          setIsLoading(true)
-          await createCar(document.getElementById('cid').value)
-          setIsLoading(false)
-          setFlag(!flag)
-        }}
-        className='box'
+      <Group
+        position='center'
       >
-        <input type='text' id='cid' placeholder='Content ID (CID)' required />
-        <div style={{ width: '100%' }}>
-          {/* Submit button to create a new car NFT */}
-          <button type='submit' className='primary-btn' disabled={isLoading}>
-            {isLoading ? 'Submitting...' : 'Submit'}
-          </button>
-        </div>
-      </form>
+        <h1>List of Cars</h1>
+
+        {/* Form for creating a new car NFT */}
+        <MintCarNftForm
+          isLoading
+          onSubmit={async (form) => {
+            const { cid, dailyRate, lateRate } = form.values
+            await createCar(cid, dailyRate, lateRate)
+            setFlag(!flag)
+          }}
+        />
+      </Group>
 
       {/* Filters for list of cars to display */}
       <div
@@ -77,20 +71,22 @@ function CreateCar ({ createCar }) {
       >
         {
           accountIdFilterOptions.map(({ value, label }) => (
-            <>
+            <div
+              key={label}
+            >
               <input
-                type="radio"
+                type='radio'
                 className='invisible'
-                name="accountIdFilter"
-                onClick={() => setAccountIdFilter(value)}
+                name='accountIdFilter'
+                onChange={() => setAccountIdFilter(value)}
                 id={label}
                 value={value}
                 checked={accountIdFilter === value}
               />
-              <label for={label}>
+              <label htmlFor={label}>
                 {label}
               </label>
-            </>
+            </div>
           ))
         }
       </div>

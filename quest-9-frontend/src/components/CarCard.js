@@ -1,6 +1,34 @@
+import { useEffect, useState } from 'react'
 import moment from 'moment'
+import { ethers } from 'ethers'
+
+import MerchantBackend from '../MerchantBackend.json'
 
 function CarCard ({ nft, actionButton }) {
+  const [data, setData] = useState(null)
+
+  useEffect(() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(process.env.REACT_APP_SC_ADDRESS, MerchantBackend.abi, signer)
+
+    const fetchData = async () => {
+      if (!contract?.cars) {
+        return null
+      }
+      try {
+        const tx = await contract.cars(nft.serial_number)
+        setData(tx)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    fetchData()
+  }, [nft.serial_number])
+
+  const dailyRate = data?.dailyRate && Number(ethers.utils.formatEther(data.dailyRate)).toFixed(0)
+  const lateRate = data?.lateRate && Number(ethers.utils.formatEther(data.lateRate)).toFixed(0)
+
   return (
     <div className='card'>
       <div className='box'>
@@ -41,6 +69,14 @@ function CarCard ({ nft, actionButton }) {
                       .format('DD MMMM YYYY, h:mm:ss A')
                   }
                 </td>
+              </tr>
+              <tr>
+                <td className='title'>Daily Rate:</td>
+                <td className='desc'>{dailyRate} HBAR/day</td>
+              </tr>
+              <tr>
+                <td className='title'>Current Holder:</td>
+                <td className='desc'>{lateRate} HBAR/day</td>
               </tr>
             </tbody>
           </table>
