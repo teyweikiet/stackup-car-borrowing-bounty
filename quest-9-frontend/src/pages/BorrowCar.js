@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import CarCard from '../components/CarCard'
+import { Center } from '@mantine/core'
 
 function BorrowButton ({ nft, borrowCar, flag, setFlag }) {
   const [isLoading, setIsLoading] = useState(false)
@@ -46,21 +47,22 @@ function Borrow ({ borrowCar }) {
   return (
     <div className='App'>
       <h1>Car Borrowing Page</h1>
-
-      {data?.nfts?.map((nft, index) => (
-        <CarCard
-          key={index}
-          nft={nft}
-          actionButton={
-            <BorrowButton
-              nft={nft}
-              borrowCar={borrowCar}
-              flag={flag}
-              setFlag={setFlag}
-            />
+      <Center>
+        {data?.nfts?.map((nft, index) => (
+          <CarCard
+            key={index}
+            nft={nft}
+            actionButton={
+              <BorrowButton
+                nft={nft}
+                borrowCar={borrowCar}
+                flag={flag}
+                setFlag={setFlag}
+              />
           }
-        />
-      ))}
+          />
+        ))}
+      </Center>
     </div>
   )
 }

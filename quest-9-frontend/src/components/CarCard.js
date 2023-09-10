@@ -28,6 +28,7 @@ function CarCard ({ nft, actionButton }) {
 
   const dailyRate = data?.dailyRate && Number(ethers.utils.formatEther(data.dailyRate)).toFixed(0)
   const lateRate = data?.lateRate && Number(ethers.utils.formatEther(data.lateRate)).toFixed(0)
+  const returnBy = data?.returnBy && Number(data.returnBy)
 
   return (
     <div className='card'>
@@ -75,9 +76,25 @@ function CarCard ({ nft, actionButton }) {
                 <td className='desc'>{dailyRate} HBAR/day</td>
               </tr>
               <tr>
-                <td className='title'>Current Holder:</td>
+                <td className='title'>Late Rate:</td>
                 <td className='desc'>{lateRate} HBAR/day</td>
               </tr>
+              {
+                returnBy
+                  ? (
+                    <tr>
+                      <td className='title'>Return by:</td>
+                      <td className='desc'>
+                        {
+                        moment
+                          .unix(nft.modified_timestamp)
+                          .format('DD MMMM YYYY, h:mm:ss A')
+                      }
+                      </td>
+                    </tr>
+                    )
+                  : null
+              }
             </tbody>
           </table>
           {/* Button for returning the car */}

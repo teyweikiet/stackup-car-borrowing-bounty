@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Center, Stack } from '@mantine/core'
 
 import CarCard from '../components/CarCard'
 
@@ -47,20 +48,24 @@ function Return ({ returnCar, address }) {
     <div className='App'>
       <h1>Car Returning Page</h1>
 
-      {data?.nfts?.map((nft, index) => (
-        <CarCard
-          key={index}
-          nft={nft}
-          actionButton={
-            <ReturnButton
+      <Center>
+        <Stack>
+          {data?.nfts?.map((nft, index) => (
+            <CarCard
+              key={index}
               nft={nft}
-              returnCar={returnCar}
-              flag={flag}
-              setFlag={setFlag}
-            />
+              actionButton={
+                <ReturnButton
+                  nft={nft}
+                  returnCar={returnCar}
+                  flag={flag}
+                  setFlag={setFlag}
+                />
           }
-        />
-      ))}
+            />
+          ))}
+        </Stack>
+      </Center>
     </div>
   )
 }

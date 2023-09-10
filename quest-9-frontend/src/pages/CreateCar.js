@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import CarCard from '../components/CarCard'
 import { AccountId } from '@hashgraph/sdk'
 import MintCarNftForm from '../components/MintCarNftForm'
-import { Group } from '@mantine/core'
+import { Group, Center, Stack } from '@mantine/core'
 
 const nftId = AccountId.fromSolidityAddress(process.env.REACT_APP_NFT_ADDRESS).toString()
 const scId = process.env.REACT_APP_SC_ID
@@ -92,26 +92,30 @@ function CreateCar ({ createCar }) {
       </div>
 
       {/* List of car NFTs created */}
-      {data?.nfts?.map((nft, index) => (
-        <CarCard
-          key={index}
-          nft={nft}
-          actionButton={
-            <div
-              className={isAvailable(nft.account_id) ? 'primary-btn' : 'return-btn'}
-              style={{
-                cursor: 'initial'
-              }}
-            >
-              {
+      <Center>
+        <Stack>
+          {data?.nfts?.map((nft, index) => (
+            <CarCard
+              key={index}
+              nft={nft}
+              actionButton={
+                <div
+                  className={isAvailable(nft.account_id) ? 'primary-btn' : 'return-btn'}
+                  style={{
+                    cursor: 'initial'
+                  }}
+                >
+                  {
                 isAvailable(nft.account_id)
                   ? 'Available'
                   : 'Borrowed'
               }
-            </div>
+                </div>
           }
-        />
-      ))}
+            />
+          ))}
+        </Stack>
+      </Center>
     </div>
   )
 }
