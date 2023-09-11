@@ -1,23 +1,64 @@
 import { useEffect, useState } from 'react'
 
 import CarCard from '../components/CarCard'
-import { Center } from '@mantine/core'
+import { Box, Button, Center, Group, Modal, NumberInput, Stack } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import { useForm } from '@mantine/form'
 
-function BorrowButton ({ nft, borrowCar, flag, setFlag }) {
+function BorrowButton ({ nft, borrowCar, flag, setFlag, dailyRate }) {
+  const [opened, { open, close }] = useDisclosure(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const form = useForm({
+    initialValues: {
+      duration: 1
+    }
+  })
+
   return (
-    <button
-      className='primary-btn'
-      onClick={async () => {
-        setIsLoading(true)
-        await borrowCar(nft.token_id, nft.serial_number)
-        setIsLoading(false)
-        setFlag(!flag)
-      }}
-      disabled={isLoading}
-    >
-      {isLoading ? 'Borrowing...' : 'Borrow'}
-    </button>
+    <>
+      <Modal
+        closeOnClickOutside={false}
+        opened={opened}
+        onClose={() => {
+          close()
+          form.reset()
+        }}
+        title='Borrow Car'
+      >
+        <Box maw={300} mx='auto'>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault()
+              setIsLoading(true)
+              await borrowCar(nft.token_id, nft.serial_number, form.values.duration, dailyRate)
+              setIsLoading(false)
+              setFlag(!flag)
+              close()
+            }}
+          >
+            <NumberInput
+              label='Duration'
+              required
+              min={1}
+              formatter={(v) => `${v} day${v > 1 ? 's' : ''}`}
+              {...form.getInputProps('duration')}
+            />
+            <Group position='right' mt='md'>
+              <Button
+                type='submit'
+                disabled={isLoading}
+              >
+                {isLoading ? 'Borrowing...' : 'Borrow'}
+              </Button>
+            </Group>
+          </form>
+        </Box>
+      </Modal>
+      <Group position='center'>
+        <Button onClick={open}>Borrow</Button>
+      </Group>
+    </>
   )
 }
 
@@ -48,20 +89,24 @@ function Borrow ({ borrowCar }) {
     <div className='App'>
       <h1>Car Borrowing Page</h1>
       <Center>
-        {data?.nfts?.map((nft, index) => (
-          <CarCard
-            key={index}
-            nft={nft}
-            actionButton={
-              <BorrowButton
+        <Stack>
+          {
+            data?.nfts?.map((nft, index) => (
+              <CarCard
+                key={index}
                 nft={nft}
-                borrowCar={borrowCar}
-                flag={flag}
-                setFlag={setFlag}
+                actionButton={
+                  <BorrowButton
+                    nft={nft}
+                    borrowCar={borrowCar}
+                    flag={flag}
+                    setFlag={setFlag}
+                  />
+                }
               />
+            ))
           }
-          />
-        ))}
+        </Stack>
       </Center>
     </div>
   )

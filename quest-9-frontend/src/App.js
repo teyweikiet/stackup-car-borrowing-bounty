@@ -164,7 +164,7 @@ function App () {
       })
   }
 
-  const borrowCar = async (id, serial) => {
+  const borrowCar = async (id, serial, duration, dailyRate) => {
     // Part 11 - check if tokens are associated, associate them if not
     if (!(await isAssociated(id))) {
       await associateNFTToken(id)
@@ -174,10 +174,15 @@ function App () {
     try {
       if (!contract) getContract()
       // Part 12 - borrow new car
-      const tx = await contract.borrowing(AccountId.fromString(id).toSolidityAddress(), serial, {
-        value: ethers.utils.parseEther('1000'),
-        gasLimit: 2_000_000
-      })
+      const tx = await contract.borrowing(
+        AccountId.fromString(id).toSolidityAddress(),
+        serial,
+        duration,
+        {
+          value: ethers.utils.parseEther(String(dailyRate * duration)),
+          gasLimit: 3_000_000
+        }
+      )
       await tx.wait()
       // Part 13 - submit borrow car logs to topic
       new TopicMessageSubmitTransaction()

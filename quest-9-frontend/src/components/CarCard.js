@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, cloneElement } from 'react'
 import moment from 'moment'
 import { ethers } from 'ethers'
 
@@ -99,7 +99,7 @@ function CarCard ({ nft, actionButton }) {
           </table>
           {/* Button for returning the car */}
           <div className='btn-container'>
-            {actionButton}
+            {cloneElement(actionButton, { dailyRate })}
           </div>
         </div>
       </div>
