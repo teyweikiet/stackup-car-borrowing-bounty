@@ -26,8 +26,9 @@ function CarCard ({ nft, actionButton }) {
     fetchData()
   }, [nft.serial_number])
 
+  // console.log(data)
+  const deposit = data?.deposit && Number(ethers.utils.formatEther(data.deposit)).toFixed(0)
   const dailyRate = data?.dailyRate && Number(ethers.utils.formatEther(data.dailyRate)).toFixed(0)
-  const lateRate = data?.lateRate && Number(ethers.utils.formatEther(data.lateRate)).toFixed(0)
   const returnBy = data?.returnBy && Number(data.returnBy)
 
   return (
@@ -72,12 +73,12 @@ function CarCard ({ nft, actionButton }) {
                 </td>
               </tr>
               <tr>
-                <td className='title'>Daily Rate:</td>
-                <td className='desc'>{dailyRate} HBAR/day</td>
+                <td className='title'>Refundable Deposit:</td>
+                <td className='desc'>{deposit} HBAR</td>
               </tr>
               <tr>
-                <td className='title'>Late Rate:</td>
-                <td className='desc'>{lateRate} HBAR/day</td>
+                <td className='title'>Daily Rate:</td>
+                <td className='desc'>{dailyRate} HBAR/day</td>
               </tr>
               {
                 returnBy
@@ -87,7 +88,7 @@ function CarCard ({ nft, actionButton }) {
                       <td className='desc'>
                         {
                         moment
-                          .unix(nft.modified_timestamp)
+                          .unix(returnBy)
                           .format('DD MMMM YYYY, h:mm:ss A')
                       }
                       </td>
@@ -99,7 +100,7 @@ function CarCard ({ nft, actionButton }) {
           </table>
           {/* Button for returning the car */}
           <div className='btn-container'>
-            {cloneElement(actionButton, { dailyRate })}
+            {cloneElement(actionButton, { dailyRate, deposit, returnBy })}
           </div>
         </div>
       </div>

@@ -14,8 +14,8 @@ function MintCarNftForm ({ onSubmit }) {
   const form = useForm({
     initialValues: {
       cid: '',
-      dailyRate: 100,
-      lateRate: 120
+      deposit: 1000,
+      dailyRate: 100
     },
 
     validate: {
@@ -52,19 +52,19 @@ function MintCarNftForm ({ onSubmit }) {
             />
 
             <NumberInput
+              label='Refundable Deposit'
+              required
+              min={1}
+              formatter={(v) => !Number.isNaN(parseFloat(v)) ? `${v} HBAR` : ' HBAR'}
+              {...form.getInputProps('deposit')}
+            />
+
+            <NumberInput
               label='Daily Rate'
               required
               min={1}
               formatter={rateInputFormatter}
               {...form.getInputProps('dailyRate')}
-            />
-
-            <NumberInput
-              label='Late Rate'
-              required
-              min={1}
-              formatter={rateInputFormatter}
-              {...form.getInputProps('lateRate')}
             />
 
             <Group position='right' mt='md'>

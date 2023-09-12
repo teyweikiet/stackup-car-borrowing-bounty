@@ -58,8 +58,8 @@ function CreateCar ({ createCar }) {
         <MintCarNftForm
           isLoading
           onSubmit={async (form) => {
-            const { cid, dailyRate, lateRate } = form.values
-            await createCar(cid, dailyRate, lateRate)
+            const { cid, deposit, dailyRate } = form.values
+            await createCar(cid, deposit, dailyRate)
             setFlag(!flag)
           }}
         />

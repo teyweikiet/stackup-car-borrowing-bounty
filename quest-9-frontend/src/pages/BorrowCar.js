@@ -5,7 +5,7 @@ import { Box, Button, Center, Group, Modal, NumberInput, Stack } from '@mantine/
 import { useDisclosure } from '@mantine/hooks'
 import { useForm } from '@mantine/form'
 
-function BorrowButton ({ nft, borrowCar, flag, setFlag, dailyRate }) {
+function BorrowButton ({ nft, borrowCar, flag, setFlag, dailyRate, deposit }) {
   const [opened, { open, close }] = useDisclosure(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -31,7 +31,7 @@ function BorrowButton ({ nft, borrowCar, flag, setFlag, dailyRate }) {
             onSubmit={async (e) => {
               e.preventDefault()
               setIsLoading(true)
-              await borrowCar(nft.token_id, nft.serial_number, form.values.duration, dailyRate)
+              await borrowCar(nft.token_id, nft.serial_number, form.values.duration, dailyRate, deposit)
               setIsLoading(false)
               setFlag(!flag)
               close()

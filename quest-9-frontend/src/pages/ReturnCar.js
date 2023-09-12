@@ -3,14 +3,14 @@ import { Center, Stack } from '@mantine/core'
 
 import CarCard from '../components/CarCard'
 
-function ReturnButton ({ nft, returnCar, flag, setFlag }) {
+function ReturnButton ({ nft, returnCar, flag, setFlag, returnBy }) {
   const [isLoading, setIsLoading] = useState(false)
   return (
     <button
       className='return-btn'
       onClick={async () => {
         setIsLoading(true)
-        await returnCar(nft.token_id, nft.serial_number)
+        await returnCar(nft.token_id, nft.serial_number, returnBy)
         setIsLoading(false)
         setFlag(!flag)
       }}

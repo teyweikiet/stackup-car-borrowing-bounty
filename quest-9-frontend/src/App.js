@@ -101,15 +101,16 @@ function App () {
     getScore()
   }, [defaultAccount])
 
-  const createCar = async (cid, dailyRate, lateRate) => {
+  const createCar = async (cid, deposit, dailyRate) => {
     try {
       if (!contract) getContract()
       // Part 6 - add new car
       const tx = await contract.mintNFT(
         nftAddress,
         [Buffer.from(cid)],
+        ethers.utils.parseEther(String(deposit)),
         ethers.utils.parseEther(String(dailyRate)),
-        ethers.utils.parseEther(String(lateRate)), {
+        {
           gasLimit: 1_000_000
         }
       )
@@ -164,7 +165,7 @@ function App () {
       })
   }
 
-  const borrowCar = async (id, serial, duration, dailyRate) => {
+  const borrowCar = async (id, serial, duration, dailyRate, deposit) => {
     // Part 11 - check if tokens are associated, associate them if not
     if (!(await isAssociated(id))) {
       await associateNFTToken(id)
@@ -179,7 +180,7 @@ function App () {
         serial,
         duration,
         {
-          value: ethers.utils.parseEther(String(dailyRate * duration)),
+          value: ethers.utils.parseEther(String(Number(deposit) + Number(dailyRate) * Number(duration))),
           gasLimit: 3_000_000
         }
       )
@@ -203,20 +204,7 @@ function App () {
     }
   }
 
-  const getContractId = async () => {
-    const mirrorNodeClient = new MirrorNodeClient('testnet')
-    return await mirrorNodeClient
-      .getContractInfo(scAddress)
-      .then((acc) => {
-        const contractId = acc.contract_id
-        return contractId
-      })
-      .catch((rejectErr) => {
-        console.log('Could not get token balance', rejectErr)
-      })
-  }
-
-  const returnCar = async (id, serial) => {
+  const returnCar = async (id, serial, returnBy) => {
     try {
       if (!contract) getContract()
 
