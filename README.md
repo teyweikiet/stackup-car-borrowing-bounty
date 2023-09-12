@@ -9,9 +9,9 @@
   <p align="center">
     A full stack Car borrowing Dapp!
     <br />
-    <a href="kit-t-car-borrowing-stackup-bounty.netlify.app"><strong>View Demo</strong></a>
+    <a href="https://kit-t-car-borrowing-stackup-bounty.netlify.app"><strong>View Demo</strong></a>
     |
-    <a href="https://hashscan.io/testnet/contract/0.0.1159124"><strong>View Contract</strong></a>
+    <a href="https://hashscan.io/testnet/contract/0.0.1580537"><strong>View Contract</strong></a>
     <br />
   </p>
 </div>
@@ -23,6 +23,7 @@
       <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#functionalities">Functionalities</a></li>
+        <li><a href="#thought-process">Thought Process</a></li>
       </ul>
     </li>
     <li>
@@ -60,7 +61,23 @@ This is a submission for [StackUp's Hedera Capstone Project Expansion Bounty](ht
 
 - Merchant can see a list of cars added and filter them by status (Borrowed or Available). This is important for merchant to keep track of all the inventories and their availabilty.
 
-![Merchant Car List With Filters](docs/images/merchant-car-list-with-filters.png)
+![Merchant car list With filters](docs/images/merchant-car-list-with-filters.png)
+
+- Merchant can set custom refundable deposit and daily rate for each car added. This allows merchant to set appropriate rates for different model of cars and cater to customers with different budgets and needs.
+
+![Merchant add new car](docs/images/merchant-add-new-car.png)
+
+- Customer can choose how long to borrow a car for.
+
+![Customer choose duration of borrowing](docs/images/customer-choose-duration-of-borrowing.png)
+
+- Customer can see when to return the car by. This is essential so that they can return the car on time.
+
+![Customer see return by date](docs/images/customer-see-return-by-date.png)
+
+### Thought process
+
+I started tackling the bounty by braimstorming a list of possible features to add, then wrote down pseudo codes to implement them and estimated efforts needed. Afterwards, I prioritized features that can be implemented indepedently with smallest effort and add them incrementally to deliver the most value.
 
 ## Built With
 
@@ -100,7 +117,9 @@ git clone https://github.com/teyweikiet/stackup-car-borrowing-bounty.git
 
 #### Deploying Smart Contract & Creating Topics
 
-1. Refer instructions on [Hedera campaign quest 8](https://app.stackup.dev/quest_page/advanced-quest-8---car-borrowing-dapp-capstone-project-backend-1) to deploy smart contract
+1. Checkout latest version of contract deployed [here](./quest-8-backend/contracts/MerchantBackend.sol).
+
+2. Refer instructions on [Hedera campaign quest 8](https://app.stackup.dev/quest_page/advanced-quest-8---car-borrowing-dapp-capstone-project-backend-1) to deploy smart contract from Remix IDE
 
 
 #### Frontend
