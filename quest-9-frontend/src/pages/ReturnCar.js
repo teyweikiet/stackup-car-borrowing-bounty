@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Center, Stack } from '@mantine/core'
+import { AccountId } from '@hashgraph/sdk'
 
 import CarCard from '../components/CarCard'
 
@@ -21,6 +22,8 @@ function ReturnButton ({ nft, returnCar, flag, setFlag, returnBy }) {
   )
 }
 
+const tokenId = AccountId.fromSolidityAddress(process.env.REACT_APP_NFT_ADDRESS).toString()
+
 function Return ({ returnCar, address }) {
   const [data, setData] = useState()
   const [flag, setFlag] = useState(false)
@@ -30,7 +33,7 @@ function Return ({ returnCar, address }) {
     const readData = async () => {
       try {
         await fetch(
-          `https://testnet.mirrornode.hedera.com/api/v1/accounts/${address}/nfts?order=asc`
+          `https://testnet.mirrornode.hedera.com/api/v1/accounts/${address}/nfts?order=asc&token.id=${tokenId}`
         )
           .then((response) => response.json())
           .then((data) => {

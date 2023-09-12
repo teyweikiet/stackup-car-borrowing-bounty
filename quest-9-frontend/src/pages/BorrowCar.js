@@ -62,11 +62,11 @@ function BorrowButton ({ nft, borrowCar, flag, setFlag, dailyRate, deposit }) {
   )
 }
 
+const contractAddress = process.env.REACT_APP_SC_ADDRESS
+
 function Borrow ({ borrowCar }) {
   const [data, setData] = useState()
   const [flag, setFlag] = useState(false)
-
-  const contractAddress = process.env.REACT_APP_SC_ADDRESS
 
   useEffect(() => {
     // Fetching data from Hedera Mirror Node for car that can be borrowed
